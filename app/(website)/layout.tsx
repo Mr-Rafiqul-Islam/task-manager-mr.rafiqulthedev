@@ -1,11 +1,12 @@
-import Header from '@/components/Header'
-import React from 'react'
+import Header from "@/components/Header";
+import { TaskProvider } from "@/utils/providers/TasksProvider";
+import React from "react";
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-    <Header/>
-    {children}
+      <Header />
+      <TaskProvider>{children}</TaskProvider>
     </>
-  )
+  );
 }
