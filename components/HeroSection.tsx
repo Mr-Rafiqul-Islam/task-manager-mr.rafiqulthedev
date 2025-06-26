@@ -4,11 +4,11 @@ import heroImg from "@/public/tasks-bro.svg"
 
 export default function HeroSection() {
   return (
-    <section className="pb-[114px] pt-20 md:mt-[100px]">
-		<div className="container lg:px-20">
+    <section className="pb-[50px] pt-10">
+		<div className="container">
 			<div className="grid items-center gap-6 md:grid-cols-2">
 				<div className="flex justify-center md:order-2">
-					<Image className="max-md:w-full" src={heroImg} width="426" height="390" alt="frame" />
+					<Image className="max-md:w-full" src={heroImg} width="326" height="390" alt="frame" />
 				</div>
 				<div>
 					<h1 className="mb-4 text-[56px] font-bold leading-none text-[#F5BF42] lg:text-[73px]">
