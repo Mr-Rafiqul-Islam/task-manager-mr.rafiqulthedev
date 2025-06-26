@@ -4,7 +4,7 @@ import heroImg from "@/public/tasks-bro.svg"
 
 export default function HeroSection() {
   return (
-    <section className="pb-[50px] pt-10">
+    <section className="py-8">
 		<div className="container">
 			<div className="grid items-center gap-6 md:grid-cols-2">
 				<div className="flex justify-center md:order-2">

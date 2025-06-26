@@ -6,7 +6,7 @@ import useTask from "@/utils/hooks/useTask";
 import React from "react";
 
 export default function TaskList() {
-  const { tasks } = useTask();
+  const { tasks, loading } = useTask();
   return (
     <div className="overflow-auto">
       <table className="table-fixed overflow-auto xl:w-full">
@@ -35,7 +35,19 @@ export default function TaskList() {
           </tr>
         </thead>
 
-        {tasks.length === 0 ? (
+        {loading ? (
+          <tbody>
+            <tr>
+              <td className="text-center text-2xl w-full animate-pulse" colSpan={5}>
+              <div className="h-3 bg-gray-700 rounded-full w-full mb-4"/>
+              <div className="h-3 bg-gray-700 rounded-full w-full mb-4"/>
+              <div className="h-3 bg-gray-700 rounded-full w-full mb-4"/>
+              <div className="h-3 bg-gray-700 rounded-full w-full mb-4"/>
+              <div className="h-3 bg-gray-700 rounded-full w-full mb-4"/>
+              </td>
+            </tr>
+          </tbody>
+        ) : tasks?.length === 0 ? (
           <tbody>
             <tr className="w-full">
               <td className="text-center text-2xl w-full" colSpan={5}>
@@ -45,7 +57,7 @@ export default function TaskList() {
           </tbody>
         ) : (
           <tbody>
-            {tasks.map((task: Task, idx: number) => (
+            {tasks?.map((task: Task, idx: number) => (
               <tr
                 key={task.id}
                 className="border-b border-[#2E3443] [&>td]:align-baseline [&>td]:px-4 [&>td]:py-2"
