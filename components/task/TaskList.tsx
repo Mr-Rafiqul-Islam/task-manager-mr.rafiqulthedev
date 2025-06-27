@@ -2,7 +2,7 @@
 import { Task } from "@/types";
 import { format } from "date-fns";
 import useTask from "@/utils/hooks/useTask";
-import { formatCamelCase } from "@/utils/helper";
+import { formatCamelCase, getStatusColor } from "@/utils/helper";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -12,17 +12,20 @@ interface Props {
 }
 
 const TaskList: React.FC<Props> = ({ onEdit, onDelete }) => {
-  const { tasks, loading } = useTask();
+  const { filteredTasks, loading } = useTask();
   const router = useRouter();
 
   const handleView = (id: string) => router.push(`/tasks/${id}`);
 
-  /* ----- common cell for skeleton ----- */
+  //   for loading skeleton
   const SkeletonCell = ({ colSpan }: { colSpan: number }) => (
     <td className="px-4 py-2" colSpan={colSpan}>
       <div className="space-y-2">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-3 w-full animate-pulse rounded bg-gray-700" />
+          <div
+            key={i}
+            className="h-3 w-full animate-pulse rounded bg-gray-700"
+          />
         ))}
       </div>
     </td>
@@ -31,12 +34,15 @@ const TaskList: React.FC<Props> = ({ onEdit, onDelete }) => {
   return (
     <div className="overflow-auto">
       <table className="table-fixed xl:w-full">
-        
         <thead>
           <tr>
-            <th className="w-[100px] p-4 pb-8 text-base font-semibold">SL No.</th>
+            <th className="w-[100px] p-4 pb-8 text-base font-semibold">
+              SL No.
+            </th>
             <th className="w-full p-4 pb-8 text-base font-semibold">Title</th>
-            <th className="w-[300px] p-4 pb-8 text-base font-semibold">Status</th>
+            <th className="w-[300px] p-4 pb-8 text-base font-semibold">
+              Status
+            </th>
             <th className="md:w-[350px] p-4 pb-8 text-base font-semibold">
               Due Date
             </th>
@@ -46,29 +52,32 @@ const TaskList: React.FC<Props> = ({ onEdit, onDelete }) => {
           </tr>
         </thead>
 
-        
         <tbody>
           {loading ? (
             <tr>
               <SkeletonCell colSpan={5} />
             </tr>
-          ) : tasks.length === 0 ? (
+          ) : filteredTasks.length === 0 ? (
             <tr>
               <td colSpan={5} className="px-4 py-8 text-center text-2xl">
-                There is no task to show..
+                No tasks match this filter.
               </td>
             </tr>
           ) : (
-            tasks.map((task, i) => (
+            filteredTasks.map((task, i) => (
               <tr
                 key={task.id}
                 className="border-b border-[#2E3443] [&>td]:px-4 [&>td]:py-2"
               >
                 <td>{i + 1}</td>
 
-                <td className="capitalize">{task.title}</td>
+                <td className="capitalize text-center">{task.title}</td>
 
-                <td className="text-center">{formatCamelCase(task.status)}</td>
+                <td
+                  className={`text-center font-bold ${getStatusColor(task.status)}`}
+                >
+                  {formatCamelCase(task.status)}
+                </td>
 
                 <td className="text-center">
                   {format(new Date(task.due_date), "EEE MMM dd yyyy")}

@@ -1,30 +1,31 @@
+// utils/contexts/TaskContext.tsx
 "use client";
-import axios, { AxiosError } from "axios";
+import { Task } from "@/types";
+import axios from "axios";
 import React, {
   createContext,
+  useState,
+  useMemo,
+  useEffect,
   Dispatch,
   SetStateAction,
-  useEffect,
-  useState,
 } from "react";
 
-/* ---------- types ---------- */
-export type Task = {
-  id: string;
-  title: string;
-  description: string;
-  due_date: string;
-  status: "Pending" | "In Progress" | "Completed";
-};
+
+
+export type Filter = "all" | "pending" | "inprogress" | "completed";
 
 interface TaskContextType {
-  tasks: Task[];
+  tasks: Task[]; 
+  filteredTasks: Task[];
   loading: boolean;
+  filter: Filter;
+  /* setters & helpers */
+  setFilter: Dispatch<SetStateAction<Filter>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
-  addTask: (task: Task) => void;
-  removeTask: (id: string) => void;
-  editTask: (id: string, changes: Partial<Omit<Task, "id">>) => void;
-  clearTasks: () => void;
+  addTask(task: Task): void;
+  removeTask(id: string): void;
+  editTask(id: string, changes: Partial<Omit<Task, "id">>): void;
 }
 
 /* ---------- context ---------- */
@@ -34,45 +35,53 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // ⬅️  start true
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<Filter>("all");
 
-  /* ---------- fetch once ---------- */
+  /* fetch once */
   useEffect(() => {
     (async () => {
       try {
         const { data } = await axios.get<Task[]>(
-          `${process.env.NEXT_PUBLIC_API_URL}/tasks`,
+          `${process.env.NEXT_PUBLIC_API_URL}/tasks`
         );
         setTasks(data);
-      } catch (err: unknown) {
-        const msg = axios.isAxiosError(err)
-          ? err.message
-          : "Unknown error while fetching tasks";
-        console.error(msg);
+      } catch (err) {
+        console.error("Error fetching tasks:", err);
       } finally {
         setLoading(false);
       }
     })();
   }, []);
 
-  /* ---------- helpers ---------- */
-  const addTask = (task: Task) => setTasks((prev) => [...prev, task]);
+  /* helper CRUD */
+  const addTask = (task: Task) => setTasks((p) => [...p, task]);
   const removeTask = (id: string) =>
-    setTasks((prev) => prev.filter((t) => t.id !== id));
+    setTasks((p) => p.filter((t) => t.id !== id));
   const editTask = (id: string, changes: Partial<Omit<Task, "id">>) =>
-    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...changes } : t)));
-  const clearTasks = () => setTasks([]);
+    setTasks((p) => p.map((t) => (t.id === id ? { ...t, ...changes } : t)));
+  
+
+  /* derived value */
+  const filteredTasks = useMemo(() => {
+    if (filter === "all") return tasks;
+    return tasks.filter(
+      (t) => t.status.toLowerCase().replace(/\s/g, "") === filter
+    );
+  }, [tasks, filter]);
 
   return (
     <TaskContext.Provider
       value={{
         tasks,
+        filteredTasks,
         loading,
+        filter,
+        setFilter,
         setLoading,
         addTask,
         removeTask,
         editTask,
-        clearTasks,
       }}
     >
       {children}
