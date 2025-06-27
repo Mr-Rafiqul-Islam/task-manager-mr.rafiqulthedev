@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ✅ Task Management App – Softivus Frontend Developer Task
 
-## Getting Started
+A professional, responsive, and functional **Task Management Web App** built using **Next.js (App Router)**, **TypeScript**, and **Tailwind CSS**. This app performs full **CRUD** operations through a provided API, offering a smooth dashboard experience with clean UI, proper loading states, and real-time updates.
 
-First, run the development server:
+
+
+---
+
+## 📚 Table of Contents
+
+- [📸 Demo](#-demo)
+- [🚀 Features](#-features)
+- [✨ Bonus Features](#-bonus-features)
+- [🛠 Tech Stack](#-tech-stack)
+- [📦 Getting Started](#-getting-started)
+- [📄 License](#-license)
+
+---
+
+## 📸 Demo
+
+🔗 [Live Demo on Vercel](https://task-manager-mr-rafiqulthedev.vercel.app/) 
+
+---
+
+## 🚀 Features (Required)
+
+### ✅ Dashboard (`/`)
+- View all tasks with:
+  - Title
+  - Status
+  - Due Date (formatted)
+  - Actions: `View`, `Edit`, `Delete`
+- Filter tasks by **status**: `All`, `Pending`, `Completed`
+
+### ✅ View Task (`/tasks/[id]`)
+- Show full task details: title, description, status, due date
+- Show loading skeleton/spinner while fetching
+- Gracefully handle invalid ID with “Task not found”
+
+### ✅ Add Task (`/tasks/new`)
+- Create a new task using form:
+  - Fields: Title, Description, Status, Due Date
+  - Validations included
+- Submit via `POST` to API
+- Show success/error UI
+
+### ✅ Edit Task (`/tasks/[id]/edit`)
+- Same form as `Add Task`, pre-filled with existing data
+- Update task using `PUT` request
+- Show loading while fetching
+
+### ✅ Delete Task
+- Delete from list or single task page
+- Confirmation modal for safety
+- Send `DELETE` request
+
+### ✅ Loading States
+- Loading indicators during:
+  - Fetching task(s)
+  - Form submissions
+  - Page transitions
+
+---
+
+## ✨ Bonus Features (Optional Implementations)
+
+- ✅ Status badges with color indicators (e.g., green for completed)
+- ✅ Reusable UI Components:
+  - Modal
+  - Button
+  - Loader
+
+---
+
+## 🛠 Tech Stack
+
+| Technology     | Purpose                        |
+|----------------|--------------------------------|
+| **Next.js**    | Fullstack React framework      |
+| **TypeScript** | Type safety                    |
+| **Tailwind CSS** | Utility-first styling        |
+| **React Hook Form** *(or controlled inputs)* | Form state |
+| **date-fns**   | Date formatting                |
+| **App Router** | Navigation & routing           |
+| **useState / useEffect** | Core React state     |
+
+---
+
+## 📦 Getting Started
+
+### 🧩 Prerequisites
+- Node.js (v18+)
+- npm or yarn
+
+### 🔧 Installation
 
 ```bash
+git clone https://github.com/Mr-Rafiqul-Islam/task-manager-mr.rafiqulthedev.git
+cd task-manager-mr.rafiqulthedev
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
+Visit: http://localhost:3000
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+License
+This project is for assignment and evaluation purposes. You may adapt or enhance it for learning or personal portfolio use.
