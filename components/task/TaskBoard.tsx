@@ -8,39 +8,43 @@ import axios from "axios";
 import useTask from "@/utils/hooks/useTask";
 
 interface TaskType {
-    id: string;
-    title: string;
-    description: string;
-    due_date: string;
-    status: "Pending" | "In Progress" | "Completed";
-  }
+  id: string;
+  title: string;
+  description: string;
+  due_date: string;
+  status: "Pending" | "In Progress" | "Completed";
+}
 
 export default function TaskBoard() {
-    const {addTask}= useTask()
+  const { addTask, editTask } = useTask();
   const [showAddModal, setShowAddModal] = useState(false);
-  const [taskToUpdate, setTaskToUpdate] = useState(null);
+  const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null);
 
   async function handleAddEditTask(newTask: Task, isAdd: boolean) {
     if (isAdd) {
       try {
         const response = await axios.post<Task>(
-          `${process.env.NEXT_PUBLIC_API_URL}/tasks`,newTask
+          `${process.env.NEXT_PUBLIC_API_URL}/tasks`,
+          newTask
         );
         if (response.status === 201) {
-            addTask(response.data)
+          addTask(response.data);
         }
       } catch (err) {
         console.error(err);
       }
     } else {
-      // setTasks(
-      //     tasks.map((task) => {
-      //         if (task.id === newTask.id) {
-      //             return newTask;
-      //         }
-      //         return task;
-      //     })
-      // );
+      try {
+        const response = await axios.put<Task>(
+          `${process.env.NEXT_PUBLIC_API_URL}/tasks/${taskToUpdate?.id}`,
+          newTask
+        );
+        if (response.status === 200) {
+            editTask(taskToUpdate!.id, newTask);
+          }
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     handleCloseClick();
@@ -49,6 +53,15 @@ export default function TaskBoard() {
   function handleCloseClick() {
     setShowAddModal(false);
     setTaskToUpdate(null);
+  }
+
+  function handleEditTask(task: Task) {
+    setTaskToUpdate(task);
+    setShowAddModal(true);
+  }
+
+  function handleDeleteTask(taskId: string) {
+    console.log(taskId);
   }
   return (
     <section className="mb-20" id="tasks">
@@ -66,7 +79,7 @@ export default function TaskBoard() {
             onAddClick={() => setShowAddModal(true)}
             onDeleteAllClick={() => {}}
           />
-          <TaskList />
+          <TaskList onEdit={handleEditTask} onDelete={handleDeleteTask} />
         </div>
       </div>
     </section>

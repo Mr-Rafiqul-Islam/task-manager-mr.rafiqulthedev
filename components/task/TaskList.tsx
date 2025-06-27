@@ -5,7 +5,11 @@ import useTask from "@/utils/hooks/useTask";
 
 import React from "react";
 
-export default function TaskList() {
+interface TaskPropType {
+  onEdit: (task: Task) => void;
+  onDelete: (id: string) => void;
+}
+const TaskList: React.FC<TaskPropType> = ({ onEdit, onDelete }) => {
   const { tasks, loading } = useTask();
   return (
     <div className="overflow-auto">
@@ -38,12 +42,15 @@ export default function TaskList() {
         {loading ? (
           <tbody>
             <tr>
-              <td className="text-center text-2xl w-full animate-pulse" colSpan={5}>
-              <div className="h-3 bg-gray-700 rounded-full w-full mb-4"/>
-              <div className="h-3 bg-gray-700 rounded-full w-full mb-4"/>
-              <div className="h-3 bg-gray-700 rounded-full w-full mb-4"/>
-              <div className="h-3 bg-gray-700 rounded-full w-full mb-4"/>
-              <div className="h-3 bg-gray-700 rounded-full w-full mb-4"/>
+              <td
+                className="text-center text-2xl w-full animate-pulse"
+                colSpan={5}
+              >
+                <div className="h-3 bg-gray-700 rounded-full w-full mb-4" />
+                <div className="h-3 bg-gray-700 rounded-full w-full mb-4" />
+                <div className="h-3 bg-gray-700 rounded-full w-full mb-4" />
+                <div className="h-3 bg-gray-700 rounded-full w-full mb-4" />
+                <div className="h-3 bg-gray-700 rounded-full w-full mb-4" />
               </td>
             </tr>
           </tbody>
@@ -83,10 +90,16 @@ export default function TaskList() {
                     <button className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#00D991A1]">
                       View
                     </button>
-                    <button className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#1C92FFB0]">
+                    <button
+                      className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#1C92FFB0]"
+                      onClick={() => onEdit(task)}
+                    >
                       Edit
                     </button>
-                    <button className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#FE1A1AB5]">
+                    <button
+                      className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#FE1A1AB5]"
+                      onClick={() => onDelete(task.id)}
+                    >
                       Delete
                     </button>
                   </div>
@@ -127,4 +140,6 @@ export default function TaskList() {
       </table>
     </div>
   );
-}
+};
+
+export default TaskList;
