@@ -17,7 +17,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { TaskPayload,TaskStatus } from "@/types";
+import { TaskPayload, TaskStatus } from "@/types";
 
 interface AddTaskModalProps {
   onSave: (task: TaskPayload, isAdd: boolean) => void;
@@ -124,7 +124,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
                 <SelectTrigger id="status">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="">
                   <SelectItem value="Pending">Pending</SelectItem>
                   <SelectItem value="In Progress">In&nbsp;Progress</SelectItem>
                   <SelectItem value="Completed">Completed</SelectItem>

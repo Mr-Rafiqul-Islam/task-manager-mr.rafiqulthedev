@@ -8,13 +8,6 @@ import axios from "axios";
 import useTask from "@/utils/hooks/useTask";
 import { Task,TaskPayload } from "@/types";
 
-interface TaskType {
-  id: string;
-  title: string;
-  description: string;
-  due_date: string;
-  status: "Pending" | "In Progress" | "Completed";
-}
 
 export default function TaskBoard() {
   const { addTask, editTask,removeTask, } = useTask();
