@@ -42,7 +42,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
   const [formData, setFormData] = React.useState<Task>({
     title: taskToUpdate?.title ?? "",
     description: taskToUpdate?.description ?? "",
-    status: taskToUpdate?.status ?? "",
+    status: taskToUpdate?.status ?? "pending",
     due_date: taskToUpdate?.due_date ?? "",
   });
 
@@ -127,7 +127,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
               <Select
                 value={formData.status}
                 onValueChange={handleStatusChange}
-                required
+                required={true}
               >
                 <SelectTrigger id="status">
                   <SelectValue placeholder="Select status" />

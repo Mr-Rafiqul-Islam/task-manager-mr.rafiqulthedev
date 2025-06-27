@@ -16,7 +16,7 @@ interface TaskType {
 }
 
 export default function TaskBoard() {
-  const { addTask, editTask } = useTask();
+  const { addTask, editTask,removeTask, } = useTask();
   const [showAddModal, setShowAddModal] = useState(false);
   const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null);
 
@@ -60,8 +60,18 @@ export default function TaskBoard() {
     setShowAddModal(true);
   }
 
-  function handleDeleteTask(taskId: string) {
-    console.log(taskId);
+  async function handleDeleteTask(taskId: string) {
+    
+    try {
+      const response = await axios.delete<Task>(
+        `${process.env.NEXT_PUBLIC_API_URL}/tasks/${taskId}`
+      );
+      if (response.status === 200) {
+        removeTask(taskId);
+        }
+    } catch(err){
+      console.error(err);
+    }
   }
   return (
     <section className="mb-20" id="tasks">

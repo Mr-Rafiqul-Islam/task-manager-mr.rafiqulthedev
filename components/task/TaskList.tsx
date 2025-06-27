@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import useTask from "@/utils/hooks/useTask";
 
 import React from "react";
+import { formatCamelCase } from "@/utils/helper";
 
 interface TaskPropType {
   onEdit: (task: Task) => void;
@@ -71,13 +72,13 @@ const TaskList: React.FC<TaskPropType> = ({ onEdit, onDelete }) => {
               >
                 <td>{idx + 1}</td>
                 <td>
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-center capitalize">
                     {task.title}
                   </div>
                 </td>
                 <td>
                   <div className="flex items-center justify-center">
-                    {task.status}
+                    {formatCamelCase(task.status)}
                   </div>
                 </td>
                 <td>
@@ -87,17 +88,17 @@ const TaskList: React.FC<TaskPropType> = ({ onEdit, onDelete }) => {
                 </td>
                 <td>
                   <div className="flex items-center justify-center space-x-3">
-                    <button className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#00D991A1]">
+                    <button className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#00D991A1] hover:scale-125 duration-300 transition-all">
                       View
                     </button>
                     <button
-                      className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#1C92FFB0]"
+                      className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#1C92FFB0] hover:scale-125 duration-300 transition-all"
                       onClick={() => onEdit(task)}
                     >
                       Edit
                     </button>
                     <button
-                      className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#FE1A1AB5]"
+                      className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#FE1A1AB5] hover:scale-125 duration-300 transition-all"
                       onClick={() => onDelete(task.id)}
                     >
                       Delete
@@ -108,35 +109,7 @@ const TaskList: React.FC<TaskPropType> = ({ onEdit, onDelete }) => {
             ))}
           </tbody>
         )}
-        {/* <tr className="border-b border-[#2E3443] [&>td]:align-baseline [&>td]:px-4 [&>td]:py-2">
-          <td>1</td>
-          <td>
-            <div className="flex items-center justify-center">
-              Integration API in Task Web Application
-            </div>
-          </td>
-          <td>
-            <div className="flex items-center justify-center">Pending</div>
-          </td>
-          <td>
-            <div className="flex items-center justify-center">
-              Wed Feb 11 2025
-            </div>
-          </td>
-          <td>
-            <div className="flex items-center justify-center space-x-3">
-              <button className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#00D991A1]">
-                View
-              </button>
-              <button className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#1C92FFB0]">
-                Edit
-              </button>
-              <button className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#FE1A1AB5]">
-                Delete
-              </button>
-            </div>
-          </td>
-        </tr> */}
+        
       </table>
     </div>
   );
