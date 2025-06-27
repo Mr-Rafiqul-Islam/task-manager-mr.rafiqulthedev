@@ -1,103 +1,165 @@
-import React from "react";
- export interface Task {
-    title : string;
-    description: string;
-    status: string;
-    due_date: string
- }
-interface AddTaskModalProps {
-    onSave: (task: Task, isAdd: boolean) => void;
-    taskToUpdate?: Task | null;
-    onCloseClick: () => void;
-  }
-  const AddTaskModal: React.FC<AddTaskModalProps> = ({
-    onSave,
-    taskToUpdate = null,
-    onCloseClick,
-  }) => {
+import * as React from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
-    const isAdd = taskToUpdate === null;
-
-    const onSubmit=(formData:Task)=>{
-        onSave(formData, isAdd)
-    }
-  return (
-    <>
-    {/* <div className="bg-black bg-opacity-70 h-screen w-full z-10 absolute top-0 left-0"></div> */}
-    <form className="mx-auto my-10 w-full max-w-[740px] rounded-xl border border-[#FEFBFB]/[36%] bg-[#191D26] p-9 max-md:px-4 lg:my-20 lg:p-11 z-10 absolute top-1/4 left-1/3">
-        <h2 className="mb-9 text-center text-2xl font-bold text-white lg:mb-11 lg:text-[28px]">
-            {isAdd ? "Add New Task" : "Edit Task" }
-        </h2>
-
-        <div className="space-y-9 text-white lg:space-y-10">
-            <div className="space-y-2 lg:space-y-3">
-                <label htmlFor="title">Title</label>
-                <input
-                    className="block w-full rounded-md bg-[#2D323F] px-3 py-2.5"
-                    type="text"
-                    name="title"
-                    id="title"
-                    required
-                />
-            </div>
-
-            <div className="space-y-2 lg:space-y-3">
-                <label htmlFor="description">Description</label>
-                <textarea
-                    className="block min-h-[120px] w-full rounded-md bg-[#2D323F] px-3 py-2.5 lg:min-h-[180px]"
-                    
-                    name="description"
-                    id="description"
-                    required
-                ></textarea>
-            </div>
-
-            <div className="grid-cols-2 gap-x-4 max-md:space-y-9 md:grid lg:gap-x-10 xl:gap-x-20">
-                <div className="space-y-2 lg:space-y-3">
-                    <label htmlFor="tags">Due Date</label>
-                    <input
-                        className="block w-full rounded-md bg-[#2D323F] px-3 py-2.5"
-                        type="date"
-                        name="tags"
-                        id="tags"
-                        required
-                    />
-                </div>
-
-                <div className="space-y-2 lg:space-y-3">
-                    <label htmlFor="status">Status</label>
-                    <select
-                        className="block w-full cursor-pointer rounded-md bg-[#2D323F] px-3 py-2.5"
-                        name="status"
-                        id="status"
-                        required
-                    >
-                        <option value="">Select Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="inProgress">In Progress</option>
-                        <option value="complete">Complete</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div className="mt-16 flex justify-between lg:mt-20">
-            <button
-                className="rounded bg-red-600 px-4 py-2 text-white transition-all hover:opacity-80"
-                onClick={onCloseClick}
-            >
-                Close
-            </button>
-            <button
-                type="submit"
-                className="rounded bg-blue-600 px-4 py-2 text-white transition-all hover:opacity-80"
-                
-            >
-                Save
-            </button>
-        </div>
-    </form>
-</>
-  );
+export interface Task {
+  title: string;
+  description: string;
+  status: string;
+  due_date: string;
+  id?:string;
 }
+
+interface AddTaskModalProps {
+  onSave: (task: Task, isAdd: boolean) => void;
+  taskToUpdate?: Task | null;
+  onCloseClick: () => void;
+}
+
+const AddTaskModal: React.FC<AddTaskModalProps> = ({
+  onSave,
+  taskToUpdate = null,
+  onCloseClick,
+}) => {
+  const isAdd = taskToUpdate === null;
+
+  const [formData, setFormData] = React.useState<Task>({
+    title: taskToUpdate?.title ?? "",
+    description: taskToUpdate?.description ?? "",
+    status: taskToUpdate?.status ?? "",
+    due_date: taskToUpdate?.due_date ?? "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleStatusChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, status: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onSave(formData, isAdd);
+    console.log(formData);
+    
+  };
+
+  return (
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onCloseClick();
+      }}
+    >
+      <DialogContent className="sm:max-w-[640px]">
+        <DialogHeader>
+          <DialogTitle>{isAdd ? "Add New Task" : "Edit Task"}</DialogTitle>
+          <DialogDescription>
+            Fill in the details below and hit&nbsp;Save to{" "}
+            {isAdd ? "add" : "update"} the task.
+          </DialogDescription>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="grid gap-6">
+          {/* Title */}
+          <div className="grid gap-2">
+            <label htmlFor="title">Title</label>
+            <Input
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Description */}
+          <div className="grid gap-2">
+            <label htmlFor="description">Description</label>
+            <Textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+              className="min-h-[120px]"
+            />
+          </div>
+
+          {/* Date & Status */}
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-2">
+              <label htmlFor="due_date">Due&nbsp;Date</label>
+              <Input
+                className=""
+                id="due_date"
+                type="date"
+                name="due_date"
+                value={formData.due_date}
+                onChange={handleChange}
+                required
+                min={new Date().toISOString().split("T")[0]}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <label htmlFor="status">Status</label>
+              <Select
+                value={formData.status}
+                onValueChange={handleStatusChange}
+                required
+              >
+                <SelectTrigger id="status">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="inProgress">In&nbsp;Progress</SelectItem>
+                  <SelectItem value="complete">Complete</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Footer buttons */}
+          <DialogFooter>
+            <div className="flex justify-between items-center w-full">
+              <Button
+                variant="destructive"
+                type="button"
+                onClick={onCloseClick}
+              >
+                Close
+              </Button>
+              <Button type="submit" variant="secondary">
+                Save
+              </Button>
+            </div>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 export default AddTaskModal;
