@@ -17,18 +17,11 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-
-export interface Task {
-  title: string;
-  description: string;
-  status: string;
-  due_date: string;
-  id?:string;
-}
+import { TaskPayload,TaskStatus } from "@/types";
 
 interface AddTaskModalProps {
-  onSave: (task: Task, isAdd: boolean) => void;
-  taskToUpdate?: Task | null;
+  onSave: (task: TaskPayload, isAdd: boolean) => void;
+  taskToUpdate?: TaskPayload | null;
   onCloseClick: () => void;
 }
 
@@ -39,10 +32,10 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
 }) => {
   const isAdd = taskToUpdate === null;
 
-  const [formData, setFormData] = React.useState<Task>({
+  const [formData, setFormData] = React.useState<TaskPayload>({
     title: taskToUpdate?.title ?? "",
     description: taskToUpdate?.description ?? "",
-    status: taskToUpdate?.status ?? "pending",
+    status: taskToUpdate?.status ?? "Pending",
     due_date: taskToUpdate?.due_date ?? "",
   });
 
@@ -53,7 +46,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleStatusChange = (value: string) => {
+  const handleStatusChange = (value: TaskStatus) => {
     setFormData((prev) => ({ ...prev, status: value }));
   };
 
@@ -61,7 +54,6 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
     e.preventDefault();
     onSave(formData, isAdd);
     console.log(formData);
-    
   };
 
   return (
@@ -133,9 +125,9 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="inProgress">In&nbsp;Progress</SelectItem>
-                  <SelectItem value="complete">Complete</SelectItem>
+                  <SelectItem value="Pending">Pending</SelectItem>
+                  <SelectItem value="In Progress">In&nbsp;Progress</SelectItem>
+                  <SelectItem value="Completed">Completed</SelectItem>
                 </SelectContent>
               </Select>
             </div>

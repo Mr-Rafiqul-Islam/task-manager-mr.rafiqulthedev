@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import FilterBox from "./FilterBox";
 import TaskActions from "./TaskActions";
 import TaskList from "./TaskList";
-import AddTaskModal, { Task } from "./AddTaskModal";
+import AddTaskModal from "./AddTaskModal";
 import axios from "axios";
 import useTask from "@/utils/hooks/useTask";
+import { Task,TaskPayload } from "@/types";
 
 interface TaskType {
   id: string;
@@ -20,33 +21,23 @@ export default function TaskBoard() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [taskToUpdate, setTaskToUpdate] = useState<Task | null>(null);
 
-  async function handleAddEditTask(newTask: Task, isAdd: boolean) {
+  async function handleAddEditTask(payload: TaskPayload, isAdd: boolean) {
     if (isAdd) {
-      try {
-        const response = await axios.post<Task>(
-          `${process.env.NEXT_PUBLIC_API_URL}/tasks`,
-          newTask
-        );
-        if (response.status === 201) {
-          addTask(response.data);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    } else {
-      try {
-        const response = await axios.put<Task>(
-          `${process.env.NEXT_PUBLIC_API_URL}/tasks/${taskToUpdate?.id}`,
-          newTask
-        );
-        if (response.status === 200) {
-            editTask(taskToUpdate!.id, newTask);
-          }
-      } catch (err) {
-        console.error(err);
-      }
+      // for create task
+      const { data } = await axios.post<Task>(
+        `${process.env.NEXT_PUBLIC_API_URL}/tasks`,
+        payload,
+      );
+      addTask(data);
+    } else if (taskToUpdate?.id) {
+      // for edit task
+      const { data } = await axios.put<Task>(
+        `${process.env.NEXT_PUBLIC_API_URL}/tasks/${taskToUpdate.id}`,
+        payload,
+      );
+      editTask(data.id, data); 
     }
-
+  
     handleCloseClick();
   }
 
@@ -87,7 +78,6 @@ export default function TaskBoard() {
           )}
           <TaskActions
             onAddClick={() => setShowAddModal(true)}
-            onDeleteAllClick={() => {}}
           />
           <TaskList onEdit={handleEditTask} onDelete={handleDeleteTask} />
         </div>
