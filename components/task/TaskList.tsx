@@ -5,6 +5,7 @@ import useTask from "@/utils/hooks/useTask";
 
 import React from "react";
 import { formatCamelCase } from "@/utils/helper";
+import { useRouter } from "next/navigation";
 
 interface TaskPropType {
   onEdit: (task: Task) => void;
@@ -12,6 +13,11 @@ interface TaskPropType {
 }
 const TaskList: React.FC<TaskPropType> = ({ onEdit, onDelete }) => {
   const { tasks, loading } = useTask();
+  const router = useRouter();
+
+  const handleView = (id: string) => {
+    router.push(`/tasks/${id}`)
+  };
   return (
     <div className="overflow-auto">
       <table className="table-fixed overflow-auto xl:w-full">
@@ -88,7 +94,10 @@ const TaskList: React.FC<TaskPropType> = ({ onEdit, onDelete }) => {
                 </td>
                 <td>
                   <div className="flex items-center justify-center space-x-3">
-                    <button className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#00D991A1] hover:scale-125 duration-300 transition-all">
+                    <button
+                      className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#00D991A1] hover:scale-125 duration-300 transition-all"
+                      onClick={() => handleView(task.id)}
+                    >
                       View
                     </button>
                     <button
@@ -109,7 +118,6 @@ const TaskList: React.FC<TaskPropType> = ({ onEdit, onDelete }) => {
             ))}
           </tbody>
         )}
-        
       </table>
     </div>
   );
