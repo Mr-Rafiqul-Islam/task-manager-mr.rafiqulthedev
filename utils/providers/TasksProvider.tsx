@@ -1,9 +1,15 @@
 "use client";
-import axios from "axios";
-import React, { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 
-// Define your task type
-type Task = {
+/* ---------- types ---------- */
+export type Task = {
   id: string;
   title: string;
   description: string;
@@ -13,56 +19,61 @@ type Task = {
 
 interface TaskContextType {
   tasks: Task[];
-  loading:boolean;
-  setLoading :Dispatch<SetStateAction<boolean>>;
+  loading: boolean;
+  setLoading: Dispatch<SetStateAction<boolean>>;
   addTask: (task: Task) => void;
   removeTask: (id: string) => void;
   editTask: (id: string, changes: Partial<Omit<Task, "id">>) => void;
   clearTasks: () => void;
 }
 
+/* ---------- context ---------- */
 export const TaskContext = createContext<TaskContextType | null>(null);
 
 export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true); // ⬅️  start true
 
-  // ✅ Fetch tasks on first render
+  /* ---------- fetch once ---------- */
   useEffect(() => {
-    const fetchTasks = async () => {
-        setLoading(true);
+    (async () => {
       try {
-        const response = await axios.get<Task[]>(
-          `${process.env.NEXT_PUBLIC_API_URL}/tasks`
+        const { data } = await axios.get<Task[]>(
+          `${process.env.NEXT_PUBLIC_API_URL}/tasks`,
         );
-        setTasks(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch tasks:", error);
+        setTasks(data);
+      } catch (err: unknown) {
+        const msg = axios.isAxiosError(err)
+          ? err.message
+          : "Unknown error while fetching tasks";
+        console.error(msg);
+      } finally {
         setLoading(false);
       }
-    };
-
-    fetchTasks();
+    })();
   }, []);
 
+  /* ---------- helpers ---------- */
   const addTask = (task: Task) => setTasks((prev) => [...prev, task]);
-
   const removeTask = (id: string) =>
-    setTasks((prev) => prev.filter((task) => task.id !== id));
-
+    setTasks((prev) => prev.filter((t) => t.id !== id));
   const editTask = (id: string, changes: Partial<Omit<Task, "id">>) =>
-    setTasks((prev) =>
-      prev.map((task) => (task.id === id ? { ...task, ...changes } : task))
-    );
-
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...changes } : t)));
   const clearTasks = () => setTasks([]);
 
   return (
     <TaskContext.Provider
-      value={{ tasks, addTask, removeTask, editTask, clearTasks, loading, setLoading }}
+      value={{
+        tasks,
+        loading,
+        setLoading,
+        addTask,
+        removeTask,
+        editTask,
+        clearTasks,
+      }}
     >
       {children}
     </TaskContext.Provider>

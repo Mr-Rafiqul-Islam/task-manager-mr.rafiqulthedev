@@ -2,122 +2,104 @@
 import { Task } from "@/types";
 import { format } from "date-fns";
 import useTask from "@/utils/hooks/useTask";
-
-import React from "react";
 import { formatCamelCase } from "@/utils/helper";
 import { useRouter } from "next/navigation";
+import React from "react";
 
-interface TaskPropType {
+interface Props {
   onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
 }
-const TaskList: React.FC<TaskPropType> = ({ onEdit, onDelete }) => {
+
+const TaskList: React.FC<Props> = ({ onEdit, onDelete }) => {
   const { tasks, loading } = useTask();
   const router = useRouter();
 
-  const handleView = (id: string) => {
-    router.push(`/tasks/${id}`)
-  };
+  const handleView = (id: string) => router.push(`/tasks/${id}`);
+
+  /* ----- common cell for skeleton ----- */
+  const SkeletonCell = ({ colSpan }: { colSpan: number }) => (
+    <td className="px-4 py-2" colSpan={colSpan}>
+      <div className="space-y-2">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="h-3 w-full animate-pulse rounded bg-gray-700" />
+        ))}
+      </div>
+    </td>
+  );
+
   return (
     <div className="overflow-auto">
-      <table className="table-fixed overflow-auto xl:w-full">
+      <table className="table-fixed xl:w-full">
+        
         <thead>
           <tr>
-            <th className="p-4 pb-8 text-base font-semibold capitalize w-[100px]">
-              SL No.
+            <th className="w-[100px] p-4 pb-8 text-base font-semibold">SL No.</th>
+            <th className="w-full p-4 pb-8 text-base font-semibold">Title</th>
+            <th className="w-[300px] p-4 pb-8 text-base font-semibold">Status</th>
+            <th className="md:w-[350px] p-4 pb-8 text-base font-semibold">
+              Due Date
             </th>
-            <th className="p-4 pb-8 text-base font-semibold capitalize w-full">
-              {" "}
-              Title{" "}
-            </th>
-            <th className="p-4 pb-8 text-base font-semibold capitalize w-[300px]">
-              {" "}
-              Status{" "}
-            </th>
-            <th className="p-4 pb-8 text-base font-semibold capitalize md:w-[350px]">
-              {" "}
-              Due Date{" "}
-            </th>
-
-            <th className="p-4 pb-8 text-base font-semibold capitalize md:w-[200px]">
-              {" "}
-              Actions{" "}
+            <th className="md:w-[200px] p-4 pb-8 text-base font-semibold">
+              Actions
             </th>
           </tr>
         </thead>
 
-        {loading ? (
-          <tbody>
+        
+        <tbody>
+          {loading ? (
             <tr>
-              <td
-                className="text-center text-2xl w-full animate-pulse"
-                colSpan={5}
-              >
-                <div className="h-3 bg-gray-700 rounded-full w-full mb-4" />
-                <div className="h-3 bg-gray-700 rounded-full w-full mb-4" />
-                <div className="h-3 bg-gray-700 rounded-full w-full mb-4" />
-                <div className="h-3 bg-gray-700 rounded-full w-full mb-4" />
-                <div className="h-3 bg-gray-700 rounded-full w-full mb-4" />
-              </td>
+              <SkeletonCell colSpan={5} />
             </tr>
-          </tbody>
-        ) : tasks?.length === 0 ? (
-          <tbody>
-            <tr className="w-full">
-              <td className="text-center text-2xl w-full" colSpan={5}>
+          ) : tasks.length === 0 ? (
+            <tr>
+              <td colSpan={5} className="px-4 py-8 text-center text-2xl">
                 There is no task to show..
               </td>
             </tr>
-          </tbody>
-        ) : (
-          <tbody>
-            {tasks?.map((task: Task, idx: number) => (
+          ) : (
+            tasks.map((task, i) => (
               <tr
                 key={task.id}
-                className="border-b border-[#2E3443] [&>td]:align-baseline [&>td]:px-4 [&>td]:py-2"
+                className="border-b border-[#2E3443] [&>td]:px-4 [&>td]:py-2"
               >
-                <td>{idx + 1}</td>
-                <td>
-                  <div className="flex items-center justify-center capitalize">
-                    {task.title}
-                  </div>
+                <td>{i + 1}</td>
+
+                <td className="capitalize">{task.title}</td>
+
+                <td className="text-center">{formatCamelCase(task.status)}</td>
+
+                <td className="text-center">
+                  {format(new Date(task.due_date), "EEE MMM dd yyyy")}
                 </td>
-                <td>
-                  <div className="flex items-center justify-center">
-                    {formatCamelCase(task.status)}
-                  </div>
-                </td>
-                <td>
-                  <div className="flex items-center justify-center">
-                    {format(new Date(task.due_date), "EEE MMM dd yyyy")}
-                  </div>
-                </td>
+
                 <td>
                   <div className="flex items-center justify-center space-x-3">
                     <button
-                      className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#00D991A1] hover:scale-125 duration-300 transition-all"
                       onClick={() => handleView(task.id)}
+                      className="rounded-[45px] bg-[#00D991A1] px-2.5 text-sm text-white transition-transform duration-300 hover:scale-125"
                     >
                       View
                     </button>
                     <button
-                      className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#1C92FFB0] hover:scale-125 duration-300 transition-all"
                       onClick={() => onEdit(task)}
+                      className="rounded-[45px] bg-[#1C92FFB0] px-2.5 text-sm text-white transition-transform duration-300 hover:scale-125"
                     >
                       Edit
                     </button>
                     <button
-                      className="text-white text-sm rounded-[45px] h-5 px-2.5 bg-[#FE1A1AB5] hover:scale-125 duration-300 transition-all"
                       onClick={() => onDelete(task.id)}
+                      className="rounded-[45px] bg-[#FE1A1AB5] px-2.5 text-sm text-white transition-transform duration-300 hover:scale-125"
                     >
                       Delete
                     </button>
                   </div>
                 </td>
               </tr>
-            ))}
-          </tbody>
-        )}
+            ))
+          )}
+        </tbody>
       </table>
     </div>
   );
